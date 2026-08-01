@@ -1,0 +1,6 @@
+{
+  "name": "EVOQUE",
+  "description": "Premium High-Fashion E-commerce Website & Complete Admin Portal with COD Checkout, Dynamic Inventory, Invoices, and Sales Analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
