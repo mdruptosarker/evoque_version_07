@@ -1,4 +1,4 @@
-import { Product, CategoryItem, User, Order, Coupon, EmailNotification } from '../types';
+import { Product, CategoryItem, User, Order, Coupon, EmailNotification, PromotionOffer } from '../types';
 
 export const INITIAL_CATEGORIES: CategoryItem[] = [
   {
@@ -344,3 +344,38 @@ export const INITIAL_ORDERS: Order[] = [
 ];
 
 export const INITIAL_EMAILS: EmailNotification[] = [];
+ 
+export const INITIAL_PROMOTIONS: PromotionOffer[] = [
+   {
+     id: 'promo-rangpur-free-delivery',
+     title: 'Special Delivery Privilege: Rangpur Division',
+     subtitle: '100% Free Nationwide COD Delivery across all areas in Rangpur division.',
+     type: 'delivery_offer',
+     bannerImage: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1200&q=80',
+     startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+     endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+     active: true,
+     freeDeliveryTarget: 'RANGPUR',
+     minOrderValue: 0,
+     ctaText: 'Shop Atelier Collection',
+     ctaLink: 'products',
+     showOnHeader: true,
+     showFloatingBanner: true,
+     createdAt: new Date().toISOString()
+   },
+   {
+     id: 'promo-anime-capsule-launch',
+     title: 'Anime Atelier Capsule Release',
+     subtitle: 'Exclusive handcrafted anime-inspired luxury silhouettes dropping in 7 days.',
+     type: 'collection_launch',
+     bannerImage: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=1200&q=80',
+     startDate: new Date().toISOString(),
+     endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+     active: true,
+     ctaText: 'Explore Lookbook Preview',
+     ctaLink: 'products',
+     showOnHeader: false,
+     showFloatingBanner: true,
+     createdAt: new Date().toISOString()
+   }
+];

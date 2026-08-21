@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, ShoppingBag, User as UserIcon, Menu, Mail, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, ShoppingBag, User as UserIcon, Menu, Mail, ShieldAlert, Sparkles, Clock, Truck } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 
 interface NavbarProps {
@@ -16,22 +16,74 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => 
     emails, 
     setIsEmailInboxOpen,
     setIsAuthModalOpen,
-    setAuthModalMode
+    setAuthModalMode,
+    promotions
   } = useStore();
 
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+  // Active promotion for top notification bar
+  const headerPromo = promotions.find(p => 
+    p.active && 
+    p.showOnHeader && 
+    new Date(p.endDate) >= new Date()
+  );
+
+  const [headerCountdown, setHeaderCountdown] = useState<string>('');
+
+  useEffect(() => {
+    if (!headerPromo) {
+      setHeaderCountdown('');
+      return;
+    }
+
+    const updateCountdown = () => {
+      const diff = new Date(headerPromo.endDate).getTime() - Date.now();
+      if (diff <= 0) {
+        setHeaderCountdown('');
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / 1000 / 60) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+
+      setHeaderCountdown(`${days}d ${String(hours).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`);
+    };
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, [headerPromo]);
 
   return (
     <>
       {/* Top Notification Bar */}
       <div className="bg-neutral-900 text-neutral-300 text-xs py-1.5 px-4 flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <span className="font-medium tracking-wider uppercase text-[#FAF9F6] flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             EVOQUE Atelier BD
           </span>
-          <span className="text-neutral-500 hidden sm:inline">|</span>
-          <span className="text-neutral-400 hidden sm:inline">Flat ৳120 BDT COD Delivery Anywhere in Bangladesh</span>
+          
+          <span className="text-neutral-600 hidden sm:inline">|</span>
+
+          {headerPromo ? (
+            <div className="flex items-center gap-2 text-neutral-200">
+              <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                <Truck className="w-3.5 h-3.5" />
+                {headerPromo.title}
+              </span>
+              {headerCountdown && (
+                <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono text-[11px] font-bold flex items-center gap-1">
+                  <Clock className="w-3 h-3 animate-pulse" />
+                  {headerCountdown}
+                </span>
+              )}
+            </div>
+          ) : (
+            <span className="text-neutral-400 hidden sm:inline">Flat ৳120 BDT COD Delivery Anywhere in Bangladesh</span>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <button 
@@ -66,22 +118,17 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => 
             </button>
 
             <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActivePage('home')}>
-              {/* Logo Slot with exact 25% border radius per Section 3 */}
+              {/* Brand Logo */}
               <div 
-                className="w-10 h-10 bg-neutral-900 text-white flex items-center justify-center font-serif text-lg font-bold shadow-xs transition-transform hover:scale-105"
+                className="w-10 h-10 bg-black text-white flex items-center justify-center overflow-hidden shadow-xs transition-transform hover:scale-105"
                 style={{ borderRadius: '25%' }}
-                title="EVOQUE Brand Logo Slot (Editable in Profile)"
+                title="EVOQUE Logo"
               >
-                {currentUser?.profilePicture ? (
-                  <img 
-                    src={currentUser.profilePicture} 
-                    alt="EVOQUE Logo" 
-                    className="w-full h-full object-cover" 
-                    style={{ borderRadius: '25%' }}
-                  />
-                ) : (
-                  'E'
-                )}
+                <img 
+                  src="/logo.png" 
+                  alt="EVOQUE Logo" 
+                  className="w-full h-full object-cover" 
+                />
               </div>
               <span className="font-serif text-2xl sm:text-3xl font-extrabold tracking-[0.2em] text-neutral-900 uppercase">
                 EVOQUE

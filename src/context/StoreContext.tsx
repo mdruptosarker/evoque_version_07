@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
-  Product, CategoryItem, User, Order, Coupon, CartItem, EmailNotification, OrderStatus 
+  Product, CategoryItem, User, Order, Coupon, CartItem, EmailNotification, OrderStatus, PromotionOffer 
 } from '../types';
 import { 
-  INITIAL_PRODUCTS, INITIAL_CATEGORIES, INITIAL_USERS, INITIAL_ORDERS, INITIAL_COUPONS, INITIAL_EMAILS, SEED_ADMIN_USER, SEED_CUSTOMER_USER 
+  INITIAL_PRODUCTS, INITIAL_CATEGORIES, INITIAL_USERS, INITIAL_ORDERS, INITIAL_COUPONS, INITIAL_EMAILS, INITIAL_PROMOTIONS, SEED_ADMIN_USER, SEED_CUSTOMER_USER 
 } from '../data/initialData';
 import { productUrlService } from '../services/productUrlService';
 import { sitemapService } from '../services/sitemap/sitemapService';
@@ -18,6 +18,7 @@ interface StoreContextType {
   currentUser: User | null;
   orders: Order[];
   coupons: Coupon[];
+  promotions: PromotionOffer[];
   cart: CartItem[];
   emails: EmailNotification[];
   
@@ -54,6 +55,7 @@ interface StoreContextType {
   clearCart: () => void;
   getCartSubtotal: () => number;
   deliveryCharge: number; // Flat BDT 120
+  getDeliveryDiscountInfo: (shippingAddress?: string, orderSubtotal?: number) => { charge: number; isFree: boolean; reason?: string; promotion?: PromotionOffer };
 
   // Order & Checkout Methods
   placeOrder: (shippingAddress: string, phone: string, appliedCouponCode?: string) => Order | null;
@@ -80,6 +82,11 @@ interface StoreContextType {
   updateCoupon: (id: string, updated: Partial<Coupon>) => void;
   deleteCoupon: (id: string) => void;
   validateCoupon: (code: string, orderSubtotal: number) => { valid: boolean; discountAmount: number; message: string; coupon?: Coupon };
+
+  // Promotion Banners & Delivery Offers CRUD
+  addPromotion: (promoData: Omit<PromotionOffer, 'id' | 'createdAt'>) => void;
+  updatePromotion: (id: string, updated: Partial<PromotionOffer>) => void;
+  deletePromotion: (id: string) => void;
 
   // Email Notification Helper
   addEmailNotification: (notification: Omit<EmailNotification, 'id' | 'timestamp'>) => void;
@@ -127,6 +134,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return saved ? JSON.parse(saved) : INITIAL_COUPONS;
   });
 
+  const [promotions, setPromotions] = useState<PromotionOffer[]>(() => {
+    const saved = localStorage.getItem(STORAGE_PREFIX + 'promotions');
+    return saved ? JSON.parse(saved) : INITIAL_PROMOTIONS;
+  });
+
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem(STORAGE_PREFIX + 'cart');
     return saved ? JSON.parse(saved) : [];
@@ -161,6 +173,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => { localStorage.setItem(STORAGE_PREFIX + 'currentUser', JSON.stringify(currentUser)); }, [currentUser]);
   useEffect(() => { localStorage.setItem(STORAGE_PREFIX + 'orders', JSON.stringify(orders)); }, [orders]);
   useEffect(() => { localStorage.setItem(STORAGE_PREFIX + 'coupons', JSON.stringify(coupons)); }, [coupons]);
+  useEffect(() => { localStorage.setItem(STORAGE_PREFIX + 'promotions', JSON.stringify(promotions)); }, [promotions]);
   useEffect(() => { localStorage.setItem(STORAGE_PREFIX + 'cart', JSON.stringify(cart)); }, [cart]);
   useEffect(() => { localStorage.setItem(STORAGE_PREFIX + 'emails', JSON.stringify(emails)); }, [emails]);
 
@@ -329,6 +342,105 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return { valid: true, discountAmount: discount, message: `Coupon applied: ${coupon.code}`, coupon };
   };
 
+  // Dynamic Delivery Fee & Regional Free Delivery Promotions
+  const getDeliveryDiscountInfo = (shippingAddress = '', orderSubtotal = 0) => {
+    const activeDeliveryPromos = promotions.filter(p => 
+      p.active && 
+      p.type === 'delivery_offer' &&
+      new Date(p.endDate) >= new Date()
+    );
+
+    const lowerAddress = (shippingAddress || '').toLowerCase();
+
+    for (const promo of activeDeliveryPromos) {
+      const minOrder = promo.minOrderValue || 0;
+      if (orderSubtotal > 0 && orderSubtotal < minOrder) continue;
+
+      if (promo.freeDeliveryTarget === 'ALL') {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Nationwide Delivery)`,
+          promotion: promo
+        };
+      }
+
+      if (promo.freeDeliveryTarget === 'RANGPUR' && (lowerAddress.includes('rangpur') || lowerAddress.includes('রংপুর'))) {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Delivery in Rangpur)`,
+          promotion: promo
+        };
+      }
+
+      if (promo.freeDeliveryTarget === 'DHAKA' && (lowerAddress.includes('dhaka') || lowerAddress.includes('ঢাকা'))) {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Delivery in Dhaka)`,
+          promotion: promo
+        };
+      }
+
+      if (promo.freeDeliveryTarget === 'CHITTAGONG' && (lowerAddress.includes('chittagong') || lowerAddress.includes('chattogram') || lowerAddress.includes('চট্টগ্রাম'))) {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Delivery in Chittagong)`,
+          promotion: promo
+        };
+      }
+
+      if (promo.freeDeliveryTarget === 'SYLHET' && (lowerAddress.includes('sylhet') || lowerAddress.includes('সিলেট'))) {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Delivery in Sylhet)`,
+          promotion: promo
+        };
+      }
+
+      if (promo.freeDeliveryTarget === 'RAJSHAHI' && (lowerAddress.includes('rajshahi') || lowerAddress.includes('রাজশাহী'))) {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Delivery in Rajshahi)`,
+          promotion: promo
+        };
+      }
+
+      if (promo.freeDeliveryTarget === 'KHULNA' && (lowerAddress.includes('khulna') || lowerAddress.includes('খুলনা'))) {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Delivery in Khulna)`,
+          promotion: promo
+        };
+      }
+
+      if (promo.freeDeliveryTarget === 'BARISAL' && (lowerAddress.includes('barisal') || lowerAddress.includes('বরিশাল'))) {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Delivery in Barisal)`,
+          promotion: promo
+        };
+      }
+
+      if (promo.freeDeliveryTarget === 'MYMENSINGH' && (lowerAddress.includes('mymensingh') || lowerAddress.includes('ময়মনসিংহ'))) {
+        return {
+          charge: 0,
+          isFree: true,
+          reason: `Special Offer: ${promo.title} (100% Free Delivery in Mymensingh)`,
+          promotion: promo
+        };
+      }
+    }
+
+    return { charge: 120, isFree: false };
+  };
+
   // Order & Checkout Functions
   const placeOrder = (shippingAddress: string, phone: string, appliedCouponCode?: string): Order | null => {
     if (!currentUser || cart.length === 0) return null;
@@ -346,7 +458,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
 
-    const total = subtotal + deliveryCharge - discountAmount;
+    const deliveryInfo = getDeliveryDiscountInfo(shippingAddress, subtotal);
+    const orderDeliveryCharge = deliveryInfo.charge;
+
+    const total = subtotal + orderDeliveryCharge - discountAmount;
     const orderId = 'EVQ-ORD-' + Math.floor(1000 + Math.random() * 9000);
 
     const newOrder: Order = {
@@ -367,7 +482,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         selectedColor: item.selectedColor
       })),
       subtotal,
-      deliveryCharge,
+      deliveryCharge: orderDeliveryCharge,
       discountAmount,
       total,
       paymentMethod: 'Cash on Delivery',
@@ -608,6 +723,23 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setCoupons(prev => prev.filter(c => c.id !== id));
   };
 
+  const addPromotion = (promoData: Omit<PromotionOffer, 'id' | 'createdAt'>) => {
+    const newPromo: PromotionOffer = {
+      ...promoData,
+      id: 'promo-' + Date.now().toString(36),
+      createdAt: new Date().toISOString()
+    };
+    setPromotions(prev => [newPromo, ...prev]);
+  };
+
+  const updatePromotion = (id: string, updated: Partial<PromotionOffer>) => {
+    setPromotions(prev => prev.map(p => p.id === id ? { ...p, ...updated } : p));
+  };
+
+  const deletePromotion = (id: string) => {
+    setPromotions(prev => prev.filter(p => p.id !== id));
+  };
+
   const addEmailNotification = (notif: Omit<EmailNotification, 'id' | 'timestamp'>) => {
     const newEmail: EmailNotification = {
       ...notif,
@@ -625,6 +757,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       currentUser,
       orders,
       coupons,
+      promotions,
       cart,
       emails,
       isCartOpen,
@@ -653,6 +786,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       clearCart,
       getCartSubtotal,
       deliveryCharge,
+      getDeliveryDiscountInfo,
       placeOrder,
       createManualInvoice,
       updateOrderStatus,
@@ -665,6 +799,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       updateCoupon,
       deleteCoupon,
       validateCoupon,
+      addPromotion,
+      updatePromotion,
+      deletePromotion,
       addEmailNotification
     }}>
       {children}

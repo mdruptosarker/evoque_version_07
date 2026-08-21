@@ -45,10 +45,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) =
           <div className="h-20 px-6 border-b border-neutral-200/80 bg-white flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div 
-                className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center font-serif font-bold text-sm"
+                className="w-8 h-8 bg-black text-white flex items-center justify-center overflow-hidden"
                 style={{ borderRadius: '25%' }}
               >
-                E
+                <img src="/logo.png" alt="EVOQUE Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-serif text-xl font-bold tracking-[0.2em] uppercase text-neutral-900">
                 EVOQUE

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://evoque.today/</loc>
+    <image:image>
+      <image:loc>https://evoque.today/logo.png</image:loc>
+      <image:title>EVOQUE Official Brand Logo</image:title>
+      <image:caption>EVOQUE Luxury High Fashion & Modern Apparel Bangladesh Logo</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://evoque.today/products/tailored-italian-wool-overcoat</loc>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1544441893-675973e31985</image:loc>
+      <image:title>Tailored Italian Wool Overcoat - View 1</image:title>
+      <image:caption>EVOQUE Winter Atelier Collection: Italian Wool Overcoat</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://evoque.today/products/silk-blend-cashmere-turtleneck</loc>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1576566588028-4147f3842f27</image:loc>
+      <image:title>Silk-Blend Cashmere Turtleneck - View 1</image:title>
+      <image:caption>EVOQUE Casual Luxury Collection: Cashmere Turtleneck</image:caption>
+    </image:image>
+  </url>
+</urlset>

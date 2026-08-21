@@ -33,7 +33,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setActivePage, onViewProduct
           "@type": "Organization",
           "name": "EVOQUE",
           "url": window.location.origin,
-          "logo": "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80",
+          "logo": `${window.location.origin}/logo.png`,
           "contactPoint": {
             "@type": "ContactPoint",
             "telephone": "+880 1603642630",

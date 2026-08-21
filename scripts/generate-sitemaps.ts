@@ -133,6 +133,14 @@ const imageSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
+    <loc>${BASE_DOMAIN}/</loc>
+    <image:image>
+      <image:loc>${BASE_DOMAIN}/logo.png</image:loc>
+      <image:title>EVOQUE Official Brand Logo</image:title>
+      <image:caption>EVOQUE Luxury High Fashion & Modern Apparel Bangladesh Logo</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>${BASE_DOMAIN}/products/tailored-italian-wool-overcoat</loc>
     <image:image>
       <image:loc>https://images.unsplash.com/photo-1544441893-675973e31985</image:loc>

@@ -31,14 +31,27 @@ export function generateOrderInvoicePDF(order: Order, action: 'download' | 'open
   doc.text('PREMIUM HIGH-FASHION ESSENTIALS', 18, 28);
   doc.text('Rangpur, Dhaka, Bangladesh | evoque.hq@gmail.com | +880 1603642630', 18, 33);
 
-  // Logo Badge Placeholder right side
-  doc.setDrawColor('#D1D5DB');
-  doc.setLineWidth(0.5);
-  doc.roundedRect(pageWidth - 45, 12, 28, 22, 3, 3, 'D');
-  doc.setFontSize(8);
-  doc.setTextColor('#9CA3AF');
-  doc.text('EVOQUE', pageWidth - 38, 24);
-  doc.text('LOGO SLOT', pageWidth - 39, 28);
+  // Logo Image right side
+  try {
+    const logoBase64 = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAHgA8MBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=';
+    // Draw logo badge background
+    doc.setFillColor('#000000');
+    doc.roundedRect(pageWidth - 45, 10, 26, 26, 3, 3, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor('#FFFFFF');
+    doc.text('E', pageWidth - 34, 24, { align: 'center' });
+    doc.setFontSize(5);
+    doc.text('VOQUE', pageWidth - 34, 29, { align: 'center' });
+  } catch (e) {
+    // Fallback logo slot
+    doc.setDrawColor('#D1D5DB');
+    doc.setLineWidth(0.5);
+    doc.roundedRect(pageWidth - 45, 12, 28, 22, 3, 3, 'D');
+    doc.setFontSize(8);
+    doc.setTextColor('#9CA3AF');
+    doc.text('EVOQUE', pageWidth - 38, 24);
+  }
 
   // 2. Invoice Title & Order Meta
   doc.setFont('helvetica', 'bold');

@@ -434,26 +434,19 @@ export const AdminProductsTab: React.FC = () => {
               </div>
 
               {/* Image Upload Section */}
-              <div className="space-y-4 p-4 bg-neutral-100/60 rounded-2xl border border-neutral-200">
+              <div className="space-y-5 p-5 bg-neutral-50 rounded-2xl border border-neutral-200">
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-800">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-900">
                       Primary Garment Image *
                     </label>
-                    <span className="text-[11px] text-neutral-500">Paste URL or Choose File from Laptop</span>
+                    <span className="text-[11px] text-neutral-500 font-medium">Choose file from device (Mobile/PC) or paste URL</span>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-                    <input
-                      type="text"
-                      required
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      placeholder="https://images.unsplash.com/photo-..."
-                      className="flex-1 px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-xs font-mono focus:outline-none focus:border-black"
-                    />
-                    <label className="px-4 py-2.5 bg-neutral-900 hover:bg-black text-white text-xs font-semibold rounded-xl cursor-pointer flex items-center justify-center gap-1.5 shrink-0 shadow-xs">
+
+                  <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                    <label className="w-full sm:w-auto px-5 py-3 bg-neutral-900 hover:bg-black text-white text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer flex items-center justify-center gap-2 shrink-0 shadow-sm transition-all hover:scale-[1.02] active:scale-95">
                       <ImageIcon className="w-4 h-4 text-amber-400" />
-                      <span>Choose File</span>
+                      <span>Choose File from Device</span>
                       <input 
                         type="file" 
                         accept="image/*" 
@@ -465,29 +458,55 @@ export const AdminProductsTab: React.FC = () => {
                         }} 
                       />
                     </label>
-                    {imageUrl && (
-                      <img src={imageUrl} alt="Preview" className="w-11 h-11 object-cover rounded-xl border border-neutral-300 shrink-0 bg-white" />
-                    )}
+
+                    <div className="w-full flex-1 flex gap-2 items-center">
+                      <input
+                        type="text"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        placeholder="Or paste image URL (https://...)"
+                        className="flex-1 px-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-xs font-mono focus:outline-none focus:border-black"
+                      />
+                      {imageUrl && (
+                        <div className="relative group shrink-0">
+                          <img src={imageUrl} alt="Primary Preview" className="w-11 h-11 object-cover rounded-xl border border-neutral-300 bg-white" />
+                          <button
+                            type="button"
+                            onClick={() => setImageUrl('')}
+                            className="absolute -top-1.5 -right-1.5 p-0.5 bg-rose-600 text-white rounded-full hover:bg-rose-700 shadow-xs"
+                            title="Clear image"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Additional Images / Gallery */}
-                <div className="pt-3 border-t border-neutral-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-800">
-                      Additional Gallery Images
-                    </label>
-                    <label className="text-[11px] font-bold text-neutral-900 hover:underline cursor-pointer flex items-center gap-1">
-                      <Plus className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Upload Additional Image</span>
+                <div className="pt-4 border-t border-neutral-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-neutral-900">
+                        Additional Gallery Images
+                      </label>
+                      <p className="text-[11px] text-neutral-500">Add multiple lookbook angles and texture close-ups.</p>
+                    </div>
+                    <label className="px-4 py-2 bg-neutral-200 hover:bg-neutral-300 text-neutral-800 text-xs font-bold rounded-xl cursor-pointer flex items-center justify-center gap-1.5 shrink-0 transition-colors">
+                      <Plus className="w-4 h-4 text-neutral-700" />
+                      <span>Upload Gallery File</span>
                       <input 
                         type="file" 
                         accept="image/*" 
+                        multiple
                         className="hidden" 
                         onChange={(e) => {
-                          if (e.target.files?.[0]) {
-                            handleFileUpload(e.target.files[0], (dataUrl) => {
-                              setAdditionalImages(prev => [...prev, dataUrl]);
+                          if (e.target.files) {
+                            Array.from(e.target.files).forEach(file => {
+                              handleFileUpload(file, (dataUrl) => {
+                                setAdditionalImages(prev => [...prev, dataUrl]);
+                              });
                             });
                           }
                         }} 
@@ -495,21 +514,27 @@ export const AdminProductsTab: React.FC = () => {
                     </label>
                   </div>
 
-                  {additionalImages.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-2">
+                  {additionalImages.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-2">
                       {additionalImages.map((img, idx) => (
-                        <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden border border-neutral-300 bg-white">
+                        <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden border border-neutral-300 bg-white shadow-2xs">
                           <img src={img} alt="Gallery" className="w-full h-full object-cover" />
-                          <button
-                            type="button"
-                            onClick={() => setAdditionalImages(prev => prev.filter((_, i) => i !== idx))}
-                            className="absolute top-1 right-1 p-1 bg-black/70 hover:bg-rose-600 text-white rounded-full transition-colors"
-                            title="Remove image"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button
+                              type="button"
+                              onClick={() => setAdditionalImages(prev => prev.filter((_, i) => i !== idx))}
+                              className="p-1.5 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition-transform hover:scale-110 shadow-sm"
+                              title="Remove image"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 border-2 border-dashed border-neutral-300 rounded-xl text-center text-xs text-neutral-500 bg-white/50">
+                      No additional gallery images uploaded yet. Click "Upload Gallery File" above to add photos from your phone or laptop.
                     </div>
                   )}
                 </div>
@@ -571,28 +596,38 @@ export const AdminProductsTab: React.FC = () => {
 
                 {/* Per-Color Image Mapping UI */}
                 {colorsStr.trim() && (
-                  <div className="p-4 bg-white rounded-2xl border border-neutral-200 space-y-3">
-                    <p className="text-xs font-bold uppercase tracking-wider text-neutral-800">
-                      Color-Specific Images (Customer clicks color = auto changes image)
-                    </p>
-                    <div className="space-y-3">
+                  <div className="p-4 sm:p-5 bg-white rounded-2xl border border-neutral-200 shadow-2xs space-y-4">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-neutral-900 flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-emerald-600" />
+                        <span>Color-Specific Images (Direct Device File Upload)</span>
+                      </p>
+                      <p className="text-[11px] text-neutral-500 mt-0.5">
+                        Upload direct pictures from your mobile/laptop for each color. When a customer selects a color, the main image automatically switches to that color!
+                      </p>
+                    </div>
+
+                    <div className="space-y-3.5">
                       {colorsStr.split(',').map(c => c.trim()).filter(Boolean).map((colorName) => {
                         const currentColorImg = colorImagesMap[colorName] || '';
                         return (
-                          <div key={colorName} className="p-3 bg-neutral-50 rounded-xl border border-neutral-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                            <span className="font-semibold text-xs text-neutral-900 bg-neutral-200/80 px-2.5 py-1 rounded-lg uppercase tracking-wide self-start sm:self-auto">
-                              {colorName}
-                            </span>
-                            <div className="flex-1 flex gap-2 items-center">
-                              <input
-                                type="text"
-                                value={currentColorImg}
-                                onChange={(e) => setColorImagesMap({ ...colorImagesMap, [colorName]: e.target.value })}
-                                placeholder={`Image URL for ${colorName}`}
-                                className="flex-1 px-3 py-1.5 bg-white border border-neutral-300 rounded-lg text-xs font-mono"
-                              />
-                              <label className="px-3 py-1.5 bg-neutral-800 hover:bg-black text-white text-[11px] font-semibold rounded-lg cursor-pointer shrink-0">
-                                Upload
+                          <div key={colorName} className="p-4 bg-neutral-50/80 rounded-2xl border border-neutral-200/90 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5 transition-all hover:border-neutral-300">
+                            
+                            {/* Color Tag & Info */}
+                            <div className="flex items-center gap-2.5">
+                              <span className="w-3.5 h-3.5 rounded-full border border-neutral-400 shrink-0 shadow-2xs" style={{ backgroundColor: colorName.toLowerCase().replace(/\s+/g, '') }} />
+                              <span className="font-bold text-xs text-neutral-900 uppercase tracking-wider">
+                                {colorName}
+                              </span>
+                            </div>
+
+                            {/* Upload Controls & Preview */}
+                            <div className="flex-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                              
+                              {/* Direct File Picker Button */}
+                              <label className="px-4 py-2 bg-neutral-900 hover:bg-black text-white text-xs font-bold rounded-xl cursor-pointer flex items-center justify-center gap-1.5 shrink-0 shadow-2xs transition-all hover:scale-[1.02] active:scale-95">
+                                <ImageIcon className="w-3.5 h-3.5 text-amber-400" />
+                                <span>{currentColorImg ? 'Change File' : 'Choose File'}</span>
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -600,14 +635,41 @@ export const AdminProductsTab: React.FC = () => {
                                   onChange={(e) => {
                                     if (e.target.files?.[0]) {
                                       handleFileUpload(e.target.files[0], (dataUrl) => {
-                                        setColorImagesMap({ ...colorImagesMap, [colorName]: dataUrl });
+                                        setColorImagesMap(prev => ({ ...prev, [colorName]: dataUrl }));
                                       });
                                     }
                                   }}
                                 />
                               </label>
+
+                              {/* URL Fallback Input */}
+                              <input
+                                type="text"
+                                value={currentColorImg}
+                                onChange={(e) => setColorImagesMap({ ...colorImagesMap, [colorName]: e.target.value })}
+                                placeholder={`Or paste image URL for ${colorName}`}
+                                className="flex-1 px-3 py-2 bg-white border border-neutral-300 rounded-xl text-xs font-mono focus:outline-none focus:border-black"
+                              />
+
+                              {/* Thumbnail and Remove */}
                               {currentColorImg && (
-                                <img src={currentColorImg} alt={colorName} className="w-8 h-8 object-cover rounded-md border border-neutral-300 shrink-0" />
+                                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                                  <div className="relative group">
+                                    <img src={currentColorImg} alt={colorName} className="w-10 h-10 object-cover rounded-xl border border-neutral-300 shrink-0 bg-white" />
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = { ...colorImagesMap };
+                                      delete updated[colorName];
+                                      setColorImagesMap(updated);
+                                    }}
+                                    className="p-2 text-neutral-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                                    title="Remove image for this color"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
                               )}
                             </div>
                           </div>

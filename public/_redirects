@@ -1,0 +1,18 @@
+# Netlify Redirects for EVOQUE E-Commerce
+# Ensure static XML sitemaps & robots.txt bypass SPA catch-all
+/sitemap.xml              /sitemap.xml              200
+/sitemap-products.xml     /sitemap-products.xml     200
+/sitemap-categories.xml   /sitemap-categories.xml   200
+/sitemap-collections.xml  /sitemap-collections.xml  200
+/sitemap-blog.xml         /sitemap-blog.xml         200
+/sitemap-pages.xml        /sitemap-pages.xml        200
+/image-sitemap.xml        /image-sitemap.xml        200
+/robots.txt               /robots.txt               200
+
+# Legacy route aliases
+/sitemaps/product-sitemap.xml   /sitemap-products.xml    301
+/sitemaps/category-sitemap.xml  /sitemap-categories.xml  301
+/sitemaps/image-sitemap.xml     /image-sitemap.xml       301
+
+# SPA fallback rule for React Router
+/*                        /index.html               200

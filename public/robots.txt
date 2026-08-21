@@ -1,0 +1,8 @@
+# EVOQUE Search Engine Directive
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Primary XML Sitemap Index Reference
+Sitemap: https://evoque.today/sitemap.xml

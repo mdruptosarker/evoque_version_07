@@ -6,6 +6,7 @@ import { Footer } from './components/common/Footer';
 import { CartDrawer } from './components/storefront/CartDrawer';
 import { AuthModal } from './components/storefront/AuthModal';
 import { EmailInboxDrawer } from './components/storefront/EmailInboxDrawer';
+import { PromoBannerModal } from './components/storefront/PromoBannerModal';
 
 import { HomePage } from './pages/HomePage';
 import { AllProductsPage } from './pages/AllProductsPage';
@@ -102,6 +103,9 @@ function AppContent() {
       />
       <AuthModal setActivePage={navigateToPage} />
       <EmailInboxDrawer />
+      {!isAdminView && (
+        <PromoBannerModal onNavigate={navigateToPage} />
+      )}
 
       {/* Storefront Navigation Header (Hidden in Admin Dashboard) */}
       {!isAdminView && (

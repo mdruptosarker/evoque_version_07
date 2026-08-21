@@ -16,6 +16,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onOrderCompleted, on
     currentUser, 
     getCartSubtotal, 
     deliveryCharge, 
+    getDeliveryDiscountInfo,
     placeOrder, 
     validateCoupon,
     setIsAuthModalOpen,
@@ -36,7 +37,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onOrderCompleted, on
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
 
   const subtotal = getCartSubtotal();
-  const total = subtotal + deliveryCharge - couponDiscount;
+  const deliveryInfo = getDeliveryDiscountInfo(shippingAddress, subtotal);
+  const effectiveDeliveryCharge = deliveryInfo.charge;
+  const total = subtotal + effectiveDeliveryCharge - couponDiscount;
 
   if (!currentUser) {
     return (
@@ -252,6 +255,17 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onOrderCompleted, on
                     className="w-full pl-10 pr-4 py-2.5 bg-white border border-neutral-300 rounded-xl text-sm font-medium text-neutral-900 focus:outline-none focus:border-black transition-colors"
                   />
                 </div>
+
+                {/* Regional Free Delivery Offer Live Badge */}
+                {deliveryInfo.isFree && (
+                  <div className="mt-2.5 p-3 bg-emerald-50 border border-emerald-300 rounded-xl flex items-center gap-2 text-xs text-emerald-950 font-semibold animate-fade-in">
+                    <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div>
+                      <span className="font-bold">{deliveryInfo.reason}</span>
+                      <span className="block text-[11px] font-medium text-emerald-700">Delivery charge reduced to ৳0!</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -377,12 +391,25 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onOrderCompleted, on
                 <span>Subtotal</span>
                 <span className="font-semibold text-neutral-900">৳{(subtotal || 0).toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-neutral-600">
+              <div className="flex justify-between items-center text-neutral-600">
                 <span className="flex items-center gap-1">
                   <span>Delivery Charge</span>
-                  <span className="text-[10px] bg-neutral-100 px-1.5 py-0.2 rounded text-neutral-500 font-mono">Flat BDT</span>
+                  {deliveryInfo.isFree ? (
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">FREE OFFER</span>
+                  ) : (
+                    <span className="text-[10px] bg-neutral-100 px-1.5 py-0.2 rounded text-neutral-500 font-mono">Flat COD</span>
+                  )}
                 </span>
-                <span className="font-semibold text-neutral-900">৳{(deliveryCharge || 0).toLocaleString()}</span>
+                <span className={`font-semibold ${deliveryInfo.isFree ? 'text-emerald-600 font-bold' : 'text-neutral-900'}`}>
+                  {deliveryInfo.isFree ? (
+                    <>
+                      <span className="line-through text-neutral-400 text-xs mr-1">৳120</span>
+                      <span>৳0 Free</span>
+                    </>
+                  ) : (
+                    `৳${(effectiveDeliveryCharge || 0).toLocaleString()}`
+                  )}
+                </span>
               </div>
               {couponDiscount > 0 && (
                 <div className="flex justify-between text-emerald-600 font-medium">

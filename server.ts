@@ -1,14 +1,12 @@
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const _dir = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
 
 const app = express();
 const PORT = 3000;
@@ -326,8 +324,8 @@ REQUIREMENTS:
           '@context': 'https://schema.org',
           '@type': 'Organization',
           name: 'EVOQUE Bangladesh',
-          url: 'https://evoque.com.bd',
-          logo: 'https://evoque.com.bd/logo.png',
+          url: 'https://evoque.today',
+          logo: 'https://evoque.today/logo.png',
         },
       };
     }

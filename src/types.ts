@@ -193,6 +193,27 @@ export interface Coupon {
   active: boolean;
 }
 
+export type PromoOfferType = 'delivery_offer' | 'collection_launch' | 'flash_sale' | 'announcement';
+
+export interface PromotionOffer {
+  id: string;
+  title: string;
+  subtitle?: string;
+  type: PromoOfferType;
+  bannerImage?: string;
+  startDate: string;
+  endDate: string;
+  active: boolean;
+  freeDeliveryTarget?: 'ALL' | 'RANGPUR' | 'DHAKA' | 'CHITTAGONG' | 'SYLHET' | 'RAJSHAHI' | 'KHULNA' | 'BARISAL' | 'MYMENSINGH';
+  minOrderValue?: number;
+  discountPercentage?: number;
+  ctaText?: string;
+  ctaLink?: string;
+  showOnHeader: boolean;
+  showFloatingBanner: boolean;
+  createdAt: string;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;

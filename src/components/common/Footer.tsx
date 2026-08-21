@@ -39,10 +39,10 @@ Sitemap: ${window.location.origin}/sitemap.xml`;
             <div className="md:col-span-5 space-y-4">
               <div className="flex items-center gap-3">
                 <div 
-                  className="w-10 h-10 bg-white text-neutral-900 flex items-center justify-center font-serif text-lg font-bold shadow-xs"
+                  className="w-10 h-10 bg-black text-white flex items-center justify-center overflow-hidden shadow-xs"
                   style={{ borderRadius: '25%' }}
                 >
-                  E
+                  <img src="/logo.png" alt="EVOQUE Logo" className="w-full h-full object-cover" />
                 </div>
                 <h2 className="font-serif text-3xl font-extrabold tracking-[0.25em] text-white uppercase">
                   EVOQUE

@@ -27,8 +27,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActive
       <div className="lg:hidden bg-neutral-900 text-neutral-300 border-b border-neutral-800 sticky top-0 z-40">
         <div className="px-4 py-3 flex items-center justify-between border-b border-neutral-800/80">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 bg-emerald-500 text-black flex items-center justify-center font-serif font-bold text-xs rounded-lg shadow-xs">
-              E
+            <div className="w-7 h-7 bg-black text-white flex items-center justify-center rounded-lg shadow-xs overflow-hidden">
+              <img src="/logo.png" alt="EVOQUE Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <span className="font-serif text-base font-bold tracking-[0.15em] uppercase text-white">
@@ -84,8 +84,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActive
           {/* Header */}
           <div className="h-20 px-6 border-b border-neutral-800 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-emerald-500 text-black flex items-center justify-center font-serif font-bold text-sm rounded-lg shadow-xs">
-                E
+              <div className="w-8 h-8 bg-black text-white flex items-center justify-center rounded-lg shadow-xs overflow-hidden">
+                <img src="/logo.png" alt="EVOQUE Logo" className="w-full h-full object-cover" />
               </div>
               <div>
                 <span className="font-serif text-lg font-bold tracking-[0.2em] uppercase text-white block">
